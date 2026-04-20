@@ -31,8 +31,9 @@ module.exports = {
     const paragraphCount = trimmed.split(/\n\s*\n/).filter(p => p.trim().length > 0).length || 1;
     const lineCount = trimmed.split('\n').length;
 
-    // Estimated reading time (average 200 words/minute)
-    const readingSeconds = Math.ceil((wordCount / 200) * 60);
+    // Estimated reading time (average reading speed in words per minute)
+    const AVG_WORDS_PER_MINUTE = 200;
+    const readingSeconds = Math.ceil((wordCount / AVG_WORDS_PER_MINUTE) * 60);
     const readingTime = readingSeconds < 60
       ? `${readingSeconds} sec`
       : `${Math.floor(readingSeconds / 60)} min ${readingSeconds % 60} sec`;

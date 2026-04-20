@@ -15,8 +15,8 @@ module.exports = {
       }, { quoted: message });
     }
 
-    // Only allow safe characters: digits, operators, parentheses, spaces, dots
-    if (!/^[\d\s+\-*/%.^()]+$/.test(expression)) {
+    // Only allow safe characters: digits, operators, parentheses, spaces, and dots (for decimals)
+    if (!/^[\d\s+\-*/.%^()]+$/.test(expression)) {
       return await sock.sendMessage(chatId, {
         text: '❌ Invalid expression. Only numbers and operators (+, -, *, /, %, ^, parentheses) are allowed.'
       }, { quoted: message });

@@ -83,6 +83,7 @@ const RIDDLES = [
 
 // In-memory store for pending riddle answers (chatId -> riddle index)
 const pendingRiddles = new Map();
+const RIDDLE_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
 
 module.exports = {
   command: 'riddle',
@@ -123,8 +124,8 @@ module.exports = {
     const riddle = RIDDLES[index];
     pendingRiddles.set(chatId, { index });
 
-    // Auto-clear pending riddle after 5 minutes
-    setTimeout(() => pendingRiddles.delete(chatId), 5 * 60 * 1000);
+    // Auto-clear pending riddle after timeout
+    setTimeout(() => pendingRiddles.delete(chatId), RIDDLE_TIMEOUT_MS);
 
     await sock.sendMessage(chatId, {
       text: `🧩 *Riddle Time!*\n\n❓ ${riddle.question}\n\n_Reply with_ \`.riddle answer <your answer>\` _to guess!_`

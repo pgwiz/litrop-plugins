@@ -13,7 +13,7 @@ module.exports = {
     let url;
 
     if (!input) {
-      url = 'http://numbersapi.com/random/trivia?json';
+      url = 'https://numbersapi.com/random/trivia?json';
     } else {
       const num = parseInt(input, 10);
       if (isNaN(num)) {
@@ -21,7 +21,7 @@ module.exports = {
           text: '❌ Please provide a valid number.\nExample: `.numberfact 42`'
         }, { quoted: message });
       }
-      url = `http://numbersapi.com/${num}/trivia?json`;
+      url = `https://numbersapi.com/${num}/trivia?json`;
     }
 
     try {
