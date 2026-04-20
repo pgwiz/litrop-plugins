@@ -69,72 +69,19 @@ module.exports = {
       }
     }
 
-    if (length < MIN_PASSWORD_LENGTH || length > MAX_PASSWORD_LENGTH) {
-      return await sock.sendMessage(chatId, {
-        text: `❌ Password length must be between ${MIN_PASSWORD_LENGTH} and ${MAX_PASSWORD_LENGTH}.`
-      }, { quoted: message });
-    }
-
     if (!useUpper && !useLower && !useDigits && !useSymbols) {
       return await sock.sendMessage(chatId, {
         text: '❌ At least one character type must be enabled.'
       }, { quoted: message });
     }
 
-    const password = generatePassword(length, useUpper, useLower, useDigits, useSymbols);
-    const components = [
-      useUpper ? '🔠 Uppercase' : null,
-      useLower ? '🔡 Lowercase' : null,
-      useDigits ? '🔢 Digits' : null,
-      useSymbols ? '🔣 Symbols' : null
-    ].filter(Boolean).join(', ');
+    // Ensure length is at least the number of enabled character types (one required char each)
+    const enabledTypes = [useUpper, useLower, useDigits, useSymbols].filter(Boolean).length;
+    const effectiveMin = Math.max(MIN_PASSWORD_LENGTH, enabledTypes);
 
-    await sock.sendMessage(chatId, {
-      text: `🔐 *Password Generator*\n\n🗝️ Password: \`${password}\`\n📏 Length: ${length}\n🧩 Contains: ${components}\n\n⚠️ _Keep this safe and don't share it!_`
-    }, { quoted: message });
-  }
-};
-
-
-module.exports = {
-  command: 'password',
-  aliases: ['genpass', 'passgen', 'pw'],
-  category: 'utility',
-  description: 'Generate a secure random password',
-  usage: '.password [length] [options: --no-symbols --no-upper --no-lower --no-digits]',
-
-  async handler(sock, message, args, context = {}) {
-    const chatId = context.chatId || message.key.remoteJid;
-
-    let length = 16;
-    let useUpper = true;
-    let useLower = true;
-    let useDigits = true;
-    let useSymbols = true;
-
-    for (const arg of args) {
-      if (!isNaN(arg)) {
-        length = parseInt(arg, 10);
-      } else if (arg === '--no-symbols') {
-        useSymbols = false;
-      } else if (arg === '--no-upper') {
-        useUpper = false;
-      } else if (arg === '--no-lower') {
-        useLower = false;
-      } else if (arg === '--no-digits') {
-        useDigits = false;
-      }
-    }
-
-    if (length < 4 || length > 128) {
+    if (length < effectiveMin || length > MAX_PASSWORD_LENGTH) {
       return await sock.sendMessage(chatId, {
-        text: '❌ Password length must be between 4 and 128.'
-      }, { quoted: message });
-    }
-
-    if (!useUpper && !useLower && !useDigits && !useSymbols) {
-      return await sock.sendMessage(chatId, {
-        text: '❌ At least one character type must be enabled.'
+        text: `❌ Password length must be between ${effectiveMin} and ${MAX_PASSWORD_LENGTH}.`
       }, { quoted: message });
     }
 
